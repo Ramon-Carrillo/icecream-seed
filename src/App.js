@@ -1,18 +1,21 @@
 import React, { Fragment } from 'react'
+import { HelmetProvider } from 'react-helmet-async'
 
 //* Components
 import Header from './structure/Header'
+import Footer from './structure/Footer'
+import Menu from './ice-cream/Menu'
 
 //* Styles
 import './styles/ice-cream.scss'
-import Footer from './structure/Footer'
 
 function App() {
   return (
-    <Fragment>
+    <HelmetProvider>
       <Header />
+      <Menu />
       <Footer />
-    </Fragment>
+    </HelmetProvider>
   )
 }
 
