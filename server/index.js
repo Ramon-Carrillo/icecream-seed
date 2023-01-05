@@ -1,8 +1,8 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-app.use(bodyParser.json());
-const port = 5000;
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
+app.use(bodyParser.json())
+const port = 5000
 
 const iceCreams = [
   { id: 0, name: 'Stripey Madness' },
@@ -34,7 +34,7 @@ const iceCreams = [
   { id: 26, name: 'Shaken and Whipped' },
   { id: 27, name: 'Sundae Everyday' },
   { id: 28, name: 'Toxic Sludge' },
-];
+]
 
 let menuData = [
   {
@@ -94,91 +94,85 @@ let menuData = [
     price: 1.29,
     description: 'Chocolate electricity on a motherboard of raspberry',
   },
-];
+]
 
 const getAvailableStock = () =>
   iceCreams.filter(
-    iceCream =>
-      menuData.find(menuItem => menuItem.iceCream.id === iceCream.id) ===
-      undefined
-  );
+    (iceCream) =>
+      menuData.find((menuItem) => menuItem.iceCream.id === iceCream.id) === undefined
+  )
 
 app.get('/api/menu/stock-ice-creams', (req, res) => {
-  res.send(getAvailableStock());
-});
+  res.send(getAvailableStock())
+})
 
 app.get('/api/menu/stock-ice-creams/:id', (req, res) => {
   const iceCream = getAvailableStock().find(
-    iceCream => iceCream.id === parseInt(req.params.id, 10)
-  );
+    (iceCream) => iceCream.id === parseInt(req.params.id, 10)
+  )
   if (iceCream) {
-    res.send(iceCream);
+    res.send(iceCream)
   } else {
-    res.status(404);
-    res.send({ error: 'Ice cream not found' });
+    res.status(404)
+    res.send({ error: 'Ice cream not found' })
   }
-});
+})
 
 app.get('/api/menu', (req, res) => {
-  res.send(menuData);
-});
+  setTimeout(() => {
+    res.send(menuData)
+  }, 1000)
+})
 
 app.post('/api/menu', (req, res) => {
-  const {  iceCream, ...rest } = req.body;
+  const { iceCream, ...rest } = req.body
   const newMenuItem = {
     id: menuData.reduce((prev, cur) => (cur.id > prev ? cur.id : prev), 0) + 1,
     iceCream: {
-      ...iceCreams.find(item => item.id === parseInt(iceCream.id, 10)),
+      ...iceCreams.find((item) => item.id === parseInt(iceCream.id, 10)),
     },
     ...rest,
-  };
-  menuData.push(newMenuItem);
+  }
+  menuData.push(newMenuItem)
 
-  res.send(newMenuItem);
-});
+  res.send(newMenuItem)
+})
 
 app.get('/api/menu/:id', (req, res) => {
-  const menuItem = menuData.find(
-    item => item.id === parseInt(req.params.id),
-    10
-  );
+  const menuItem = menuData.find((item) => item.id === parseInt(req.params.id), 10)
   if (menuItem) {
-    res.send(menuItem);
+    res.send(menuItem)
   } else {
-    res.status(404);
-    res.send('Menu item does not exist');
+    res.status(404)
+    res.send('Menu item does not exist')
   }
-});
+})
 
 app.put('/api/menu/:id', (req, res) => {
-  const intId = parseInt(req.params.id, 10);
-  const { iceCream, ...rest } = req.body;
+  const intId = parseInt(req.params.id, 10)
+  const { iceCream, ...rest } = req.body
 
   const updatedItem = {
     id: intId,
     iceCream: {
-      ...iceCreams.find(item => item.id === parseInt(iceCream.id, 10)),
+      ...iceCreams.find((item) => item.id === parseInt(iceCream.id, 10)),
     },
     ...rest,
-  };
-  menuData = menuData.map(menuItem => {
+  }
+  menuData = menuData.map((menuItem) => {
     if (menuItem.id === parseInt(req.params.id, 10)) {
-      return updatedItem;
+      return updatedItem
     }
-    return menuItem;
-  });
+    return menuItem
+  })
 
-  res.send(updatedItem);
-});
+  res.send(updatedItem)
+})
 
 app.delete('/api/menu/:id', (req, res) => {
-  menuData = menuData.filter(
-    menuItem => menuItem.id !== parseInt(req.params.id, 10)
-  );
-  res.status(204);
-  res.send();
-});
+  menuData = menuData.filter((menuItem) => menuItem.id !== parseInt(req.params.id, 10))
+  res.status(204)
+  res.send()
+})
 
-app.listen(port, () =>
-  console.log(`Project ICE server listening on port ${port}!`)
-);
+app.listen(port, () => console.log(`Project ICE server listening on port ${port}!`))
