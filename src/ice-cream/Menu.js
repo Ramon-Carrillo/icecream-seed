@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
+
+import propTypes from 'prop-types'
 
 //*Components
 import IceCreamImage from './IceCreamImage'
@@ -7,9 +10,10 @@ import LoaderMessage from '../structure/LoaderMessage'
 
 import { getMenu } from '../data/iceCreamData'
 
-const Menu = () => {
+const Menu = ({ history }) => {
   const [menu, setMenu] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
     let isMounted = true
@@ -26,6 +30,15 @@ const Menu = () => {
     }
   }, [])
 
+  const onItemClickHandler = (to) => {
+    navigate(to)
+  }
+
+  const onLinkClickHandler = (e) => {
+    //* Prevent the click event from bubbling up to the parent element
+    e.stopPropagation()
+  }
+
   return (
     <main>
       <Helmet>
@@ -41,12 +54,20 @@ const Menu = () => {
         <ul className="container">
           {menu.map(({ id, iceCream, price, description, inStock, quantity }) => (
             <li key={id.toString()}>
-              <section className="card">
+              <section
+                className="card"
+                onClick={() => onItemClickHandler(`/menu-items/${id.toString()}`)}>
                 <div className="image-container">
                   <IceCreamImage iceCreamId={iceCream.id} />
                 </div>
                 <div className="text-container">
-                  <h3>{iceCream.name}</h3>
+                  <h3>
+                    <Link
+                      to={`/menu-items/${id.toString()}`}
+                      onClick={onLinkClickHandler}>
+                      {iceCream.name}
+                    </Link>
+                  </h3>
                   <div className="content card-content">
                     <p className="price">{`$ ${price.toFixed(2)}`}</p>
                     <p className={`stock${inStock ? '' : ' out'}`}>
@@ -64,6 +85,12 @@ const Menu = () => {
       )}
     </main>
   )
+}
+
+Menu.propTypes = {
+  history: propTypes.shape({
+    push: propTypes.func.isRequired,
+  }),
 }
 
 export default Menu
