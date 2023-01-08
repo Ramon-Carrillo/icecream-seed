@@ -10,7 +10,7 @@ import LoaderMessage from '../structure/LoaderMessage'
 import { getMenuItem } from '../data/iceCreamData'
 
 const EditIceCream = () => {
-  const isMounted = useRef(false)
+  const isMounted = useRef(true)
   const [menuItem, setMenuItem] = useState({})
   const [isLoading, setIsLoading] = useState(false)
 
@@ -18,10 +18,16 @@ const EditIceCream = () => {
   let { menuItemId } = useParams()
 
   useEffect(() => {
+    return () => {
+      isMounted.current = false
+    }
+  }, [])
+
+  useEffect(() => {
     setIsLoading(true)
     getMenuItem(menuItemId)
       .then(({ id, price, inStock, quantity, description, iceCream }) => {
-        if (isMounted.current === false) {
+        if (!isMounted.current) {
           setMenuItem({
             id: id,
             price: price.toFixed(2),
@@ -31,9 +37,6 @@ const EditIceCream = () => {
             iceCream: iceCream,
           })
           setIsLoading(false)
-          return () => {
-            isMounted.current = true
-          }
         }
       })
       .catch((error) => {
