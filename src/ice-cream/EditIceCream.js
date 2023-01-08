@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import PropTypes from 'prop-types'
 
 import { Helmet } from 'react-helmet-async'
 
@@ -10,74 +9,42 @@ import LoaderMessage from '../structure/LoaderMessage'
 //* Data
 import { getMenuItem } from '../data/iceCreamData'
 
-const EditIceCream = ({ match }) => {
-  const isMounted = useRef(true)
+const EditIceCream = () => {
+  const isMounted = useRef(false)
   const [menuItem, setMenuItem] = useState({})
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   let navigate = useNavigate()
   let { menuItemId } = useParams()
 
   useEffect(() => {
-    return () => {
-      isMounted.current = false
-    }
-  }, [])
-
-  useEffect(() => {
-    setLoading(true)
-    ;(async () => {
-      try {
-        const { id, price, inStock, quantity, description, iceCream } = await getMenuItem(
-          menuItemId
-        )
-        if (isMounted.current) {
+    setIsLoading(true)
+    getMenuItem(menuItemId)
+      .then(({ id, price, inStock, quantity, description, iceCream }) => {
+        if (isMounted.current === false) {
           setMenuItem({
-            id,
+            id: id,
             price: price.toFixed(2),
             inStock,
             quantity: quantity.toString(),
             description,
-            iceCream,
+            iceCream: iceCream,
           })
-          setLoading(false)
+          setIsLoading(false)
+          return () => {
+            isMounted.current = true
+          }
         }
-      } catch (error) {
-        if (error.response.status === 404 && !isMounted.current) {
-          return navigate('/')
+      })
+      .catch((error) => {
+        if (error.response.status === 404 && isMounted.current) {
+          navigate('/')
         }
-      }
-      return () => {
-        isMounted.current = false
-      }
-    })()
+      })
 
-    //  getMenuItem(menuItemId)
-  }, [menuItemId, navigate])
-
-  //     .then(({ id, price, inStock, quantity, description, iceCream }) => {
-  //       console.log(
-  //         (menuItemId = { id, price, inStock, quantity, description, iceCream })
-  //       )
-  //       if (isMounted.current) {
-  //         setMenuItem({
-  //           id,
-  //           price: price.toFixed(2),
-  //           inStock,
-  //           quantity: quantity.toString(),
-  //           description,
-  //           iceCream,
-  //         })
-  //         setLoading(false)
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       if (error.response.status === 404 && !isMounted.current) {
-  //         return navigate('/')
-  //       }
-  //     })
-  // }, [menuItemId, navigate])
-  // console.log(menuItem)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [menuItemId])
+  console.log(menuItem)
 
   return (
     <main>
@@ -88,16 +55,10 @@ const EditIceCream = ({ match }) => {
       <LoaderMessage
         loadingMessage="Loading Ice Cream..."
         doneMessage="Ice Cream Loaded!"
-        isLoading={loading}
+        isLoading={isLoading}
       />
     </main>
   )
-}
-
-EditIceCream.propTypes = {
-  match: PropTypes.shape({
-    params: PropTypes.object.isRequired,
-  }),
 }
 
 export default EditIceCream
