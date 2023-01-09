@@ -27,3 +27,12 @@ export const getMenuItem = (id) => {
       throw error
     })
 }
+
+export const putMenuItem = (menuItem) => {
+  return axios
+    .put(`/api/menu/${menuItem.id.toString()}`, menuItem)
+    .then((response) => response.data)
+    .catch((error) => {
+      throw error
+    })
+}
