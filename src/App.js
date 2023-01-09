@@ -14,6 +14,9 @@ import './styles/ice-cream.scss'
 function App() {
   return (
     <Router>
+      <a href="#main" className="skip-link">
+        Skip to main content
+      </a>
       <HelmetProvider>
         <Header />
         <Routes>
