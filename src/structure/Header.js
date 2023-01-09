@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import FocusLink from './FocusLink'
 
 //*Img
 import iceCreamImg from '../assets/img/ultimate-ice-cream.svg'
@@ -12,7 +12,7 @@ const Header = () => {
         Ultimate Ice Cream
       </h1>
       <nav>
-        <NavLink to="/">Menu</NavLink>
+        <FocusLink to="/">Menu</FocusLink>
       </nav>
     </header>
   )

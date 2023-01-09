@@ -2,11 +2,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import useUniqueIds from '../hooks/useUniqueIds'
 
-import { Helmet } from 'react-helmet-async'
-
 //* Components
 import LoaderMessage from '../structure/LoaderMessage'
 import IceCreamImage from './IceCreamImage'
+import Main from '../structure/Main'
 
 //* Data
 import { getMenuItem } from '../data/iceCreamData'
@@ -54,7 +53,7 @@ const EditIceCream = () => {
       })
       .catch((error) => {
         if (error.response.status === 404 && isMounted.current) {
-          navigate('/')
+          navigate('/', { focus: true })
         }
       })
 
@@ -92,16 +91,12 @@ const EditIceCream = () => {
       description,
     }
     putMenuItem(submitItem).then(() => {
-      navigate('/')
+      navigate('/', { focus: true })
     })
   }
 
   return (
-    <main>
-      <Helmet>
-        <title>Edit Ice Cream | Ultimate Ice Cream</title>
-      </Helmet>
-      <h2 className="main-heading">Update this beauty</h2>
+    <Main headingText="Update this beauty">
       <LoaderMessage
         loadingMessage="Loading Ice Cream..."
         doneMessage="Ice Cream Loaded!"
@@ -168,7 +163,7 @@ const EditIceCream = () => {
           </div>
         </div>
       )}
-    </main>
+    </Main>
   )
 }
 

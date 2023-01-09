@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import { useNavigate } from 'react-router-dom'
+import FocusLink from '../structure/FocusLink'
 
 import propTypes from 'prop-types'
 
 //*Components
 import IceCreamImage from './IceCreamImage'
 import LoaderMessage from '../structure/LoaderMessage'
+import Main from '../structure/Main'
 
 import { getMenu } from '../data/iceCreamData'
 
@@ -31,7 +32,7 @@ const Menu = ({ history }) => {
   }, [])
 
   const onItemClickHandler = (to) => {
-    navigate(to)
+    navigate(to, { focus: true })
   }
 
   const onLinkClickHandler = (e) => {
@@ -40,11 +41,7 @@ const Menu = ({ history }) => {
   }
 
   return (
-    <main>
-      <Helmet>
-        <title>Menu - Ultimate Ice Cream</title>
-      </Helmet>
-      <h2 className="main-heading">Rock your taste buds with one of these!</h2>
+    <Main headingText="Rock your taste buds with one of these!">
       <LoaderMessage
         loadingMessage="Loading Menu"
         isLoading={isLoading}
@@ -62,11 +59,11 @@ const Menu = ({ history }) => {
                 </div>
                 <div className="text-container">
                   <h3>
-                    <Link
+                    <FocusLink
                       to={`/menu-items/${id.toString()}`}
                       onClick={onLinkClickHandler}>
                       {iceCream.name}
-                    </Link>
+                    </FocusLink>
                   </h3>
                   <div className="content card-content">
                     <p className="price">{`$ ${price.toFixed(2)}`}</p>
@@ -83,7 +80,7 @@ const Menu = ({ history }) => {
       ) : (
         !isLoading && <p>Your menu is empty!</p>
       )}
-    </main>
+    </Main>
   )
 }
 
