@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import useUniqueIds from '../hooks/useUniqueIds'
+import useValidation from '../hooks/useValidation'
 
 //* Components
 import LoaderMessage from '../structure/LoaderMessage'
 import IceCreamImage from './IceCreamImage'
 import Main from '../structure/Main'
+
+//* Utils
+import { validatePrice, validateDescription, validateQuantity } from '../utils/validators'
 
 //* Data
 import { getMenuItem } from '../data/iceCreamData'
@@ -28,6 +32,14 @@ const EditIceCream = () => {
 
   let navigate = useNavigate()
   let { menuItemId } = useParams()
+
+  const descriptionError = useValidation(menuItem.description, validateDescription)
+  const quantityError = useValidation(
+    menuItem.quantity,
+    validateQuantity,
+    menuItem.inStock
+  )
+  const priceError = useValidation(menuItem.price, validatePrice)
 
   useEffect(() => {
     return () => {
@@ -78,21 +90,27 @@ const EditIceCream = () => {
   }
 
   const onSubmitHandler = (e) => {
+    console.log('descriptionError', descriptionError)
+    console.log('quantityError', quantityError)
+    console.log('priceError', priceError)
+
     e.preventDefault()
 
-    const { id, price, inStock, quantity, description, iceCream } = menuItem
+    if (!descriptionError && !quantityError && !priceError) {
+      const { id, price, inStock, quantity, description, iceCream } = menuItem
 
-    const submitItem = {
-      id,
-      iceCream: { id: iceCream.id },
-      price: parseFloat(price),
-      inStock,
-      quantity: parseInt(quantity),
-      description,
+      const submitItem = {
+        id,
+        iceCream: { id: iceCream.id },
+        price: parseFloat(price),
+        inStock,
+        quantity: parseInt(quantity),
+        description,
+      }
+      putMenuItem(submitItem).then(() => {
+        navigate('/', { focus: true })
+      })
     }
-    putMenuItem(submitItem).then(() => {
-      navigate('/', { focus: true })
-    })
   }
 
   return (
