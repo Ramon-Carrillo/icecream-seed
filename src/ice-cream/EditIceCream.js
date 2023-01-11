@@ -15,6 +15,7 @@ import { validatePrice, validateDescription, validateQuantity } from '../utils/v
 //* Data
 import { getMenuItem } from '../data/iceCreamData'
 import { putMenuItem } from '../data/iceCreamData'
+import { deleteMenuItem } from '../data/iceCreamData'
 
 const EditIceCream = () => {
   const isMounted = useRef(true)
@@ -140,6 +141,12 @@ const EditIceCream = () => {
     }
   }
 
+  const onDeleteHandler = () => {
+    deleteMenuItem(menuItem.id).then(() => {
+      navigate('/', { focus: true })
+    })
+  }
+
   return (
     <Main headingText="Update this beauty">
       <LoaderMessage
@@ -224,6 +231,9 @@ const EditIceCream = () => {
               <div className="button-container">
                 <button className="ok" type="submit">
                   Save
+                </button>
+                <button className="warning" type="button" onClick={onDeleteHandler}>
+                  Delete
                 </button>
               </div>
             </form>
