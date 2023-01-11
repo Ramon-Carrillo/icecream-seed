@@ -18,6 +18,9 @@ import { putMenuItem } from '../data/iceCreamData'
 
 const EditIceCream = () => {
   const isMounted = useRef(true)
+  const formRef = useRef(null)
+  let navigate = useNavigate()
+  let { menuItemId } = useParams()
   const [menuItem, setMenuItem] = useState({
     price: '0.00',
     inStock: true,
@@ -26,19 +29,41 @@ const EditIceCream = () => {
     iceCream: {},
   })
   const [isLoading, setIsLoading] = useState(false)
-  const [descriptionId, stockId, quantityId, priceId] = useUniqueIds(4)
+  const [
+    descriptionId,
+    descriptionErrorId,
+    stockId,
+    quantityId,
+    quantityErrorId,
+    priceId,
+    priceErrorId,
+  ] = useUniqueIds(7)
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
-  let navigate = useNavigate()
-  let { menuItemId } = useParams()
+  const [descriptionError, descriptionErrorProps] = useValidation(
+    menuItem.description,
+    validateDescription,
+    descriptionErrorId,
+    hasSubmitted,
+    true
+  )
 
-  const descriptionError = useValidation(menuItem.description, validateDescription)
-  const quantityError = useValidation(
+  const [quantityError, quantityErrorProps] = useValidation(
     menuItem.quantity,
     validateQuantity,
-    menuItem.inStock
+    menuItem.inStock,
+    quantityErrorId,
+    hasSubmitted,
+    false
   )
-  const priceError = useValidation(menuItem.price, validatePrice)
+
+  const [priceError, priceErrorProps] = useValidation(
+    menuItem.price,
+    validatePrice,
+    priceErrorId,
+    hasSubmitted,
+    true
+  )
 
   useEffect(() => {
     return () => {
@@ -93,7 +118,12 @@ const EditIceCream = () => {
 
     setHasSubmitted(true)
 
-    if (!descriptionError && !quantityError && !priceError) {
+    if (descriptionError || quantityError || priceError) {
+      setTimeout(() => {
+        const errorControl = formRef.current.querySelector('[aria-invalid="true"]')
+        errorControl.focus()
+      })
+    } else {
       const { id, price, inStock, quantity, description, iceCream } = menuItem
 
       const submitItem = {
@@ -127,17 +157,21 @@ const EditIceCream = () => {
               <dt>Name :</dt>
               <dd>{menuItem.iceCream.name}</dd>
             </dl>
-            <form onSubmit={onSubmitHandler}>
+            <form onSubmit={onSubmitHandler} noValidate ref={formRef}>
               <label htmlFor={descriptionId}>
                 Description<span aria-hidden="true">*</span> :
               </label>
-              <ErrorContainer errorText={descriptionError} hasSubmitted={hasSubmitted}>
+              <ErrorContainer
+                errorText={descriptionError}
+                errorId={descriptionErrorId}
+                hasSubmitted={hasSubmitted}>
                 <textarea
                   id={descriptionId}
                   name="description"
                   rows="3"
                   value={menuItem.description}
                   onChange={onChangeHandler}
+                  {...descriptionErrorProps}
                 />
               </ErrorContainer>
               <label htmlFor={stockId}>In Stock :</label>
@@ -152,12 +186,16 @@ const EditIceCream = () => {
                 <div className="checkbox-wrapper-checked" />
               </div>
               <label htmlFor={quantityId}>Quantity :</label>
-              <ErrorContainer errorText={quantityError} hasSubmitted={hasSubmitted}>
+              <ErrorContainer
+                errorText={quantityError}
+                errorId={quantityErrorId}
+                hasSubmitted={hasSubmitted}>
                 <select
                   id={quantityId}
                   name="quantity"
                   value={menuItem.quantity}
-                  onChange={onChangeHandler}>
+                  onChange={onChangeHandler}
+                  {...quantityErrorProps}>
                   <option value="0">0</option>
                   <option value="10">10</option>
                   <option value="20">20</option>
@@ -169,7 +207,10 @@ const EditIceCream = () => {
               <label htmlFor={priceId}>
                 Price<span aria-hidden="true">*</span> :
               </label>
-              <ErrorContainer errorText={priceError} hasSubmitted={hasSubmitted}>
+              <ErrorContainer
+                errorText={priceError}
+                errorId={priceErrorId}
+                hasSubmitted={hasSubmitted}>
                 <input
                   id={priceId}
                   type="number"
@@ -177,6 +218,7 @@ const EditIceCream = () => {
                   name="price"
                   value={menuItem.price}
                   onChange={onChangeHandler}
+                  {...priceErrorProps}
                 />
               </ErrorContainer>
               <div className="button-container">
