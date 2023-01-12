@@ -19,7 +19,6 @@ const IceCreams = () => {
       isMounted = false
     }
   }, [])
-  console.log(iceCreams)
 
   return (
     <Main headingText="Choose your poison and enjoy!">
