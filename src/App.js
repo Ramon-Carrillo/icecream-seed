@@ -7,6 +7,7 @@ import Header from './structure/Header'
 import Footer from './structure/Footer'
 import Menu from './ice-cream/Menu'
 import EditIceCream from './ice-cream/EditIceCream'
+import IceCreams from './ice-cream/IceCreams'
 
 //* Styles
 import './styles/ice-cream.scss'
@@ -21,6 +22,8 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Menu />} />
+          <Route path="/ice-creams" element={<IceCreams />} />
+
           <Route path="/menu-items/:menuItemId" element={<EditIceCream />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
