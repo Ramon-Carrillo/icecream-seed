@@ -7,7 +7,7 @@ import propTypes from 'prop-types'
 const IceCreamCard = ({ children, to, iceCreamId, heading }) => {
   const navigate = useNavigate()
 
-  const onItemClickHandler = (to) => {
+  const onItemClickHandler = () => {
     navigate(to, { focus: true })
   }
 
